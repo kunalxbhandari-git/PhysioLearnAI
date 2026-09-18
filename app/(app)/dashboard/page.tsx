@@ -26,6 +26,7 @@ import { ClockFocusWidget } from "@/components/widgets/clock-focus";
 import { QotdWidget } from "@/components/widgets/qotd";
 import { DailyTip } from "@/components/widgets/daily-tip";
 import { SectionGrid } from "@/components/section-grid";
+import { Greeting } from "@/components/greeting";
 
 export const metadata: Metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
@@ -107,7 +108,8 @@ export default async function DashboardPage() {
           />
           <Hero3D />
           <div className="relative max-w-2xl md:max-w-[52%]">
-            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <Greeting name={user.displayName} />
+            <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
               Master Physiotherapy. <span className="text-accent-strong">One Topic at a Time.</span>
             </h1>
             <p className="mt-3 text-sm text-muted sm:text-base">

@@ -42,7 +42,8 @@ export async function getMockExamTopic() {
       icon: "stethoscope",
       enabled: false, // hidden from the library; reachable only via Exam Prep
     },
-    update: {},
+    // Self-heal: keep it hidden even if it was accidentally enabled elsewhere.
+    update: { enabled: false },
   });
 }
 

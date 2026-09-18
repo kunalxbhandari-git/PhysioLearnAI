@@ -16,6 +16,8 @@ export default async function AdminPage() {
   const [settings, topics, counts] = await Promise.all([
     getSettings(),
     prisma.topic.findMany({
+      // The mock-exam pseudo-topic is engine-managed and must stay hidden.
+      where: { slug: { not: "mock-exam" } },
       orderBy: [{ category: "asc" }, { title: "asc" }],
       include: { _count: { select: { sections: true, questions: true, flashcards: true } } },
     }),

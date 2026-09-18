@@ -1,0 +1,249 @@
+// PhysioLearn AI — data model
+// PostgreSQL (Neon) — shared by local development and the Vercel deployment.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled connection (runtime)
+  directUrl = env("DIRECT_DATABASE_URL") // direct connection (schema changes/seeding)
+}
+
+model User {
+  id          String   @id @default(cuid())
+  displayName String   @default("Student")
+  role        String   @default("USER") // USER | ADMIN
+  xp          Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  attempts        QuizAttempt[]
+  sectionProgress SectionProgress[]
+  bookmarks       Bookmark[]
+  notes           Note[]
+  achievements    UserAchievement[]
+  studySessions   StudySession[]
+  todos           Todo[]
+}
+
+model Todo {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  dueAt     DateTime?
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Topic {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  category    String // e.g. "Musculoskeletal", "Neurological", "Anatomy" ...
+  description String
+  difficulty  String // Beginner | Intermediate | Advanced
+  estMinutes  Int
+  icon        String  @default("activity") // lucide icon name
+  order       Int     @default(0)
+  enabled     Boolean @default(true)
+
+  sections   Section[]
+  questions  Question[]
+  flashcards Flashcard[]
+  attempts   QuizAttempt[]
+  bookmarks  Bookmark[]
+  notes      Note[]
+
+  keyTakeaways String @default("[]") // JSON string[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Section {
+  id         String @id @default(cuid())
+  topicId    String
+  slug       String
+  title      String
+  order      Int
+  estMinutes Int    @default(5)
+  difficulty String @default("Intermediate")
+  // JSON array of content blocks:
+  // { kind: "paragraph" | "heading" | "list" | "cards" | "warning" | "pearls"
+  //   | "steps" | "exercise" | "table" | "keypoints" | "image", ... }
+  content    String
+
+  topic     Topic             @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  progress  SectionProgress[]
+  bookmarks Bookmark[]
+
+  @@unique([topicId, slug])
+  @@index([topicId])
+}
+
+model Question {
+  id            String  @id @default(cuid())
+  topicId       String
+  sectionSlug   String?
+  difficulty    String // Easy | Medium | Hard
+  questionType  String  @default("MCQ")
+  text          String
+  options       String // JSON string[4]
+  correctIndex  Int
+  explanation   String
+  tags          String  @default("[]") // JSON string[] e.g. ["anatomy","special-tests"]
+  learningGoal  String  @default("")
+  enabled       Boolean @default(true)
+
+  topic   Topic            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  answers AttemptQuestion[]
+
+  @@index([topicId])
+}
+
+model Flashcard {
+  id      String @id @default(cuid())
+  topicId String
+  front   String
+  back    String
+  order   Int    @default(0)
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+}
+
+model QuizAttempt {
+  id            String    @id @default(cuid())
+  userId        String
+  topicId       String
+  mode          String    @default("exam") // exam | practice
+  questionCount Int
+  status        String    @default("in_progress") // in_progress | completed | abandoned
+  currentIndex  Int       @default(0)
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+
+  // Server-computed results (never trusted from the client)
+  score        Int?
+  percentage   Float?
+  passed       Boolean?
+  totalTimeSec Int?
+
+  // JSON of the AI/deterministic analysis generated on completion
+  analysis String?
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic     Topic             @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  questions AttemptQuestion[]
+
+  @@index([userId])
+  @@index([topicId])
+}
+
+model AttemptQuestion {
+  id            String    @id @default(cuid())
+  attemptId     String
+  questionId    String
+  order         Int
+  startedAt     DateTime?
+  answeredAt    DateTime?
+  selectedIndex Int?
+  correct       Boolean?
+  timedOut      Boolean   @default(false)
+  timeSec       Float?
+
+  attempt  QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, order])
+  @@index([attemptId])
+}
+
+model SectionProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  sectionId   String
+  completedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sectionId])
+  @@index([userId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  topicId   String
+  sectionId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic   Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sectionId])
+  @@index([userId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  topicId   String
+  content   String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+  @@index([userId])
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  code        String @unique
+  title       String
+  description String
+  icon        String @default("award")
+  xp          Int    @default(50)
+
+  unlocked UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+}
+
+model StudySession {
+  id        String   @id @default(cuid())
+  userId    String
+  topicSlug String
+  seconds   Int
+  date      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Setting {
+  key   String @id
+  value String
+}

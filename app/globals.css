@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+/* ── PhysioLearn AI design tokens ────────────────────────────────────── */
+
+:root {
+  /* Light — premium medical */
+  --background: #f2f7f9;
+  --surface: #ffffff;
+  --surface-2: #eaf2f5;
+  --border: #d8e4ea;
+  --text: #102437;
+  --text-muted: #5b7385;
+  --primary: #0b2e4f;
+  --primary-hover: #113d66;
+  --primary-fg: #ffffff;
+  --accent: #0e9aa7;
+  --accent-strong: #0b7f8a;
+  --accent-soft: #e0f4f6;
+  --success: #14805e;
+  --success-soft: #e0f2ec;
+  --warning: #a05e03;
+  --warning-soft: #fdf1dd;
+  --danger: #b3364b;
+  --danger-soft: #fbe7ec;
+  --ring: #0e9aa7;
+
+  /* Illustration palette */
+  --ill-bg: #ffffff;
+  --ill-stroke: #35586f;
+  --ill-accent: #0e9aa7;
+  --ill-soft: #e4eef2;
+  --ill-label: #5b7385;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #081524;
+    --surface: #0e2136;
+    --surface-2: #132a43;
+    --border: #1f3b57;
+    --text: #e5eef5;
+    --text-muted: #8aa3b8;
+    --primary: #d9ecf5;
+    --primary-hover: #ffffff;
+    --primary-fg: #0b2e4f;
+    --accent: #2cc7d4;
+    --accent-strong: #4fd6e1;
+    --accent-soft: #10333f;
+    --success: #38c69a;
+    --success-soft: #0d3229;
+    --warning: #e5a33d;
+    --warning-soft: #3a2a0c;
+    --danger: #ee6d84;
+    --danger-soft: #3d1520;
+    --ring: #2cc7d4;
+
+    --ill-bg: #0e2136;
+    --ill-stroke: #9fc2d6;
+    --ill-accent: #2cc7d4;
+    --ill-soft: #16314b;
+    --ill-label: #8aa3b8;
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: #081524;
+  --surface: #0e2136;
+  --surface-2: #132a43;
+  --border: #1f3b57;
+  --text: #e5eef5;
+  --text-muted: #8aa3b8;
+  --primary: #d9ecf5;
+  --primary-hover: #ffffff;
+  --primary-fg: #0b2e4f;
+  --accent: #2cc7d4;
+  --accent-strong: #4fd6e1;
+  --accent-soft: #10333f;
+  --success: #38c69a;
+  --success-soft: #0d3229;
+  --warning: #e5a33d;
+  --warning-soft: #3a2a0c;
+  --danger: #ee6d84;
+  --danger-soft: #3d1520;
+  --ring: #2cc7d4;
+
+  --ill-bg: #0e2136;
+  --ill-stroke: #9fc2d6;
+  --ill-accent: #2cc7d4;
+  --ill-soft: #16314b;
+  --ill-label: #8aa3b8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+[data-font-scale="large"] {
+  font-size: 112.5%;
+}
+
+/* Subtle medical grid backdrop for hero surfaces */
+.medical-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, black 30%, transparent 75%);
+}
+
+/* ECG pulse line animation */
+@keyframes ecg-dash {
+  from {
+    stroke-dashoffset: 480;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.ecg-line {
+  stroke-dasharray: 480;
+  animation: ecg-dash 5s linear infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-2deg);
+  }
+}
+.float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+.float-slow-delayed {
+  animation: float-slow 8s ease-in-out 1.2s infinite;
+}
+@keyframes float-slower {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(4deg);
+  }
+}
+.float-slower {
+  animation: float-slower 10s ease-in-out infinite;
+}
+.float-slower-delayed {
+  animation: float-slower 11s ease-in-out 2s infinite;
+}
+
+@keyframes beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  12% {
+    transform: scale(1.09);
+  }
+  24% {
+    transform: scale(1);
+  }
+  36% {
+    transform: scale(1.06);
+  }
+  48% {
+    transform: scale(1);
+  }
+}
+.beat {
+  animation: beat 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(320%) skewX(-15deg);
+  }
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.22), transparent);
+  animation: shimmer-sweep 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 108vh, 0) rotate(var(--spin, 540deg));
+    opacity: 0.9;
+  }
+}
+.confetti-piece {
+  animation-name: confetti-fall;
+  animation-timing-function: cubic-bezier(0.3, 0.4, 0.6, 0.95);
+  animation-fill-mode: both;
+}
+
+@keyframes tutor-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(14 154 167 / 0.45);
+  }
+  60% {
+    box-shadow: 0 0 0 14px rgb(14 154 167 / 0);
+  }
+}
+.tutor-pulse {
+  animation: tutor-pulse 2.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  .ecg-line,
+  .float-slow,
+  .float-slow-delayed,
+  .float-slower,
+  .float-slower-delayed,
+  .beat,
+  .tutor-pulse {
+    animation: none !important;
+  }
+  .shimmer::after {
+    display: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+[data-reduce-motion="true"] .ecg-line,
+[data-reduce-motion="true"] .float-slow,
+[data-reduce-motion="true"] .float-slow-delayed,
+[data-reduce-motion="true"] .float-slower,
+[data-reduce-motion="true"] .float-slower-delayed,
+[data-reduce-motion="true"] .beat,
+[data-reduce-motion="true"] .tutor-pulse {
+  animation: none !important;
+}
+[data-reduce-motion="true"] .shimmer::after {
+  display: none;
+}
+[data-reduce-motion="true"] * {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+
+/* Focus visibility */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+/* Scrollbar (subtle) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}

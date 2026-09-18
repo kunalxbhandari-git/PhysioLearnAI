@@ -246,9 +246,15 @@ export default async function ExamsPage() {
                 ))}
               </div>
 
-              <p className="mt-auto pt-4 text-[11px] text-muted">
-                Formats and rules change — always verify current details at {exam.website}.
-              </p>
+              <div className="mt-auto pt-4">
+                <ButtonLink href={`/exams/${exam.id}`} className="w-full">
+                  Full Prep Guide — apply, questions, strategy{" "}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </ButtonLink>
+                <p className="mt-2 text-[11px] text-muted">
+                  Formats and rules change — always verify current details at {exam.website}.
+                </p>
+              </div>
             </Card>
           </StaggerItem>
         ))}

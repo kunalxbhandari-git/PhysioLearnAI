@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Check, Loader2, LogOut, Monitor, Moon, Sun } from "lucide-react";
+import { AlertTriangle, Check, Loader2, LogOut, Monitor, Moon, Sun, Trash2 } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +24,33 @@ export function SettingsForm({ initial }: { initial: Initial }) {
   const [theme, setTheme] = useState<Theme>("system");
   const [reduceMotion, setReduceMotion] = useState(false);
   const [fontScale, setFontScale] = useState<"normal" | "large">("normal");
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetText, setResetText] = useState("");
+  const [resetting, setResetting] = useState(false);
+  const [resetDone, setResetDone] = useState(false);
   const router = useRouter();
+
+  async function forceReset() {
+    if (resetText !== "RESET" || resetting) return;
+    setResetting(true);
+    try {
+      const res = await fetch("/api/reset", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ confirm: "RESET" }),
+      });
+      if (!res.ok) throw new Error();
+      setResetDone(true);
+      setResetOpen(false);
+      setResetText("");
+      router.refresh();
+      setTimeout(() => setResetDone(false), 4000);
+    } catch {
+      setError("Reset failed — please try again.");
+    } finally {
+      setResetting(false);
+    }
+  }
 
   // Load client-side preferences
   useEffect(() => {
@@ -245,6 +271,56 @@ export function SettingsForm({ initial }: { initial: Initial }) {
         >
           <LogOut className="h-4 w-4" aria-hidden="true" /> Log out
         </Button>
+      </Card>
+
+      {/* Danger zone */}
+      <Card className="border-danger/30 p-5">
+        <h2 className="flex items-center gap-2 font-bold text-danger">
+          <AlertTriangle className="h-4 w-4" aria-hidden="true" /> Danger Zone
+        </h2>
+        <p className="mt-1 text-sm text-muted">
+          Force reset wipes <strong>all learning data back to zero</strong>: topic progress, quiz
+          history and scores, achievements, XP, streak, bookmarks, notes and to-dos. The courses
+          themselves are untouched. This cannot be undone.
+        </p>
+        {resetDone && (
+          <p className="mt-3 rounded-xl bg-success-soft px-3 py-2 text-sm font-semibold text-success">
+            Everything has been reset to 0 — fresh start!
+          </p>
+        )}
+        {!resetOpen ? (
+          <Button variant="danger" className="mt-3" onClick={() => setResetOpen(true)}>
+            <Trash2 className="h-4 w-4" aria-hidden="true" /> Force Reset All Progress
+          </Button>
+        ) : (
+          <div className="mt-3 rounded-2xl border-2 border-danger/40 bg-danger-soft p-4">
+            <p className="text-sm font-bold text-danger">
+              Are you absolutely sure? Type <span className="font-mono">RESET</span> to confirm:
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <input
+                value={resetText}
+                onChange={(e) => setResetText(e.target.value.toUpperCase())}
+                placeholder="Type RESET"
+                className="h-10 w-40 rounded-xl border border-danger/40 bg-surface px-3 font-mono text-sm font-bold outline-none focus:border-danger"
+                aria-label="Type RESET to confirm"
+              />
+              <Button variant="danger" onClick={forceReset} disabled={resetText !== "RESET" || resetting}>
+                {resetting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+                Reset everything to 0
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setResetOpen(false);
+                  setResetText("");
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
       </Card>
 
       {error && (

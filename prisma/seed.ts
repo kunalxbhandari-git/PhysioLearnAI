@@ -34,6 +34,18 @@ import rheumatoidArthritis from "./data/rheumatoid-arthritis";
 import peripheralNerveInjuries from "./data/peripheral-nerve-injuries";
 import cerebralPalsy from "./data/cerebral-palsy";
 import cardiacRehabilitation from "./data/cardiac-rehabilitation";
+import neuromuscularConditions from "./data/neuromuscular-conditions";
+import pediatricDevelopment from "./data/pediatric-development";
+import pregnancyPostnatal from "./data/pregnancy-postnatal";
+import returnToSport from "./data/return-to-sport";
+import electrotherapyModalities from "./data/electrotherapy-modalities";
+import fallsPrevention from "./data/falls-prevention";
+import acuteCarePhysiotherapy from "./data/acute-care-physiotherapy";
+import asthmaAirwayDisease from "./data/asthma-airway-disease";
+import hipConditions from "./data/hip-conditions";
+import patellofemoralPain from "./data/patellofemoral-pain";
+import frozenShoulder from "./data/frozen-shoulder";
+import footHeelPain from "./data/foot-heel-pain";
 
 const prisma = new PrismaClient();
 
@@ -66,6 +78,18 @@ const TOPICS: TopicSeed[] = [
   amputationRehabilitation,
   pelvicFloor,
   cervicalSpine,
+  hipConditions,
+  patellofemoralPain,
+  frozenShoulder,
+  footHeelPain,
+  electrotherapyModalities,
+  fallsPrevention,
+  acuteCarePhysiotherapy,
+  asthmaAirwayDisease,
+  neuromuscularConditions,
+  pediatricDevelopment,
+  pregnancyPostnatal,
+  returnToSport,
 ];
 
 const ACHIEVEMENTS = [

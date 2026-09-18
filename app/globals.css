@@ -223,6 +223,81 @@ body {
   pointer-events: none;
 }
 
+/* ── Living illustrations: diagrams build in and accents breathe ── */
+@keyframes ill-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes ill-accent-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.ill-live > div {
+  animation: ill-in 0.7s cubic-bezier(0.21, 0.65, 0.36, 1) both;
+  perspective: 800px;
+}
+.ill-live svg {
+  transition: transform 0.35s cubic-bezier(0.21, 0.65, 0.36, 1);
+}
+.ill-live:hover svg {
+  transform: rotateX(4deg) rotateY(-6deg) scale(1.03);
+}
+.ill-live svg [stroke="var(--ill-accent)"],
+.ill-live svg [fill="var(--ill-accent)"] {
+  animation: ill-accent-pulse 3.2s ease-in-out 0.8s infinite;
+}
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  .ill-live > div,
+  .ill-live svg [stroke="var(--ill-accent)"],
+  .ill-live svg [fill="var(--ill-accent)"] {
+    animation: none !important;
+  }
+  .ill-live:hover svg {
+    transform: none;
+  }
+}
+[data-reduce-motion="true"] .ill-live > div,
+[data-reduce-motion="true"] .ill-live svg [stroke="var(--ill-accent)"],
+[data-reduce-motion="true"] .ill-live svg [fill="var(--ill-accent)"] {
+  animation: none !important;
+}
+[data-reduce-motion="true"] .ill-live:hover svg {
+  transform: none;
+}
+
+@keyframes xp-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1.05);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(-18px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) scale(0.95);
+  }
+}
+.xp-pop {
+  animation: xp-pop 1.6s cubic-bezier(0.21, 0.65, 0.36, 1) both;
+}
+
 @keyframes confetti-fall {
   0% {
     transform: translate3d(0, 0, 0) rotate(0deg);

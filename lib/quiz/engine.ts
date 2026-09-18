@@ -25,25 +25,52 @@ export interface PlayState {
   answered: { order: number; timedOut: boolean; selectedIndex: number | null }[];
 }
 
-/** Start a new attempt: pick least-recently-seen questions, randomized. */
+export const MOCK_EXAM_SLUG = "mock-exam";
+
+/** The hidden pseudo-topic that mixed mock-exam attempts attach to. */
+export async function getMockExamTopic() {
+  return prisma.topic.upsert({
+    where: { slug: MOCK_EXAM_SLUG },
+    create: {
+      slug: MOCK_EXAM_SLUG,
+      title: "Mixed Mock Exam",
+      category: "Clinical Assessment",
+      description:
+        "Exam-style practice drawing questions from every topic on the platform — the closest thing to the real paper.",
+      difficulty: "Advanced",
+      estMinutes: 0,
+      icon: "stethoscope",
+      enabled: false, // hidden from the library; reachable only via Exam Prep
+    },
+    update: {},
+  });
+}
+
+/** Start a new attempt: pick least-recently-seen questions, randomized.
+ *  The special "mock-exam" slug draws from ALL topics' question banks. */
 export async function startQuiz(
   userId: string,
   topicSlug: string,
   requestedCount: number,
   mode: QuizMode
 ) {
-  const topic = await prisma.topic.findFirst({ where: { slug: topicSlug, enabled: true } });
+  const isMock = topicSlug === MOCK_EXAM_SLUG;
+  const topic = isMock
+    ? await getMockExamTopic()
+    : await prisma.topic.findFirst({ where: { slug: topicSlug, enabled: true } });
   if (!topic) throw new Error("Topic not found");
 
   const pool = await prisma.question.findMany({
-    where: { topicId: topic.id, enabled: true },
+    where: isMock
+      ? { enabled: true, topic: { enabled: true } }
+      : { topicId: topic.id, enabled: true },
     select: { id: true, difficulty: true },
   });
   if (pool.length === 0) throw new Error("No questions available for this topic yet");
 
   // Usage counts from this user's previous attempts → prefer unseen questions.
   const previous = await prisma.attemptQuestion.findMany({
-    where: { attempt: { userId, topicId: topic.id } },
+    where: { attempt: isMock ? { userId } : { userId, topicId: topic.id } },
     select: { questionId: true },
   });
   const usage = new Map<string, number>();

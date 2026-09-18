@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/components/motion";
 import {
   ArrowLeft,
   ArrowRight,
@@ -57,6 +59,8 @@ export function StudyModule({
   const [showNotes, setShowNotes] = useState(false);
   const [simplified, setSimplified] = useState<string | null>(null);
   const [simplifying, setSimplifying] = useState(false);
+  const [xpPop, setXpPop] = useState(0);
+  const reduce = usePrefersReducedMotion();
   const topRef = useRef<HTMLDivElement>(null);
 
   const section = sections[index];
@@ -89,6 +93,7 @@ export function StudyModule({
     const s = sections[index];
     if (!s.completed) {
       setSections((prev) => prev.map((x, i) => (i === index ? { ...x, completed: true } : x)));
+      setXpPop((n) => n + 1); // trigger the +10 XP reward pop
       fetch("/api/study/complete-section", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -229,7 +234,25 @@ export function StudyModule({
 
         {/* Center: content */}
         <article>
-          <Card className="p-5 sm:p-8">
+          <Card className="relative p-5 sm:p-8">
+            {/* +XP reward pop */}
+            <AnimatePresence>
+              {xpPop > 0 && (
+                <span
+                  key={xpPop}
+                  className="xp-pop pointer-events-none absolute right-6 top-6 z-10 rounded-full bg-success px-3 py-1 text-sm font-extrabold text-white shadow-lg"
+                  aria-hidden="true"
+                >
+                  +10 XP
+                </span>
+              )}
+            </AnimatePresence>
+            <motion.div
+              key={section.id}
+              initial={reduce ? false : { opacity: 0, x: 26 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, ease: [0.21, 0.65, 0.36, 1] }}
+            >
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-accent-strong">
@@ -324,6 +347,7 @@ export function StudyModule({
                 )}
               </div>
             </div>
+            </motion.div>
           </Card>
 
           {/* AI tutor */}

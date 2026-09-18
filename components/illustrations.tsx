@@ -299,9 +299,11 @@ function Lungs() {
 }
 
 import { EXTRA_ILLUSTRATIONS } from "./illustrations-extra";
+import { EXTRA_ILLUSTRATIONS_2 } from "./illustrations-extra2";
 
 export const ILLUSTRATIONS: Record<string, { component: () => React.ReactElement; alt: string }> = {
   ...EXTRA_ILLUSTRATIONS,
+  ...EXTRA_ILLUSTRATIONS_2,
   "knee-joint": { component: KneeJoint, alt: "Knee joint anatomy diagram" },
   "shoulder-joint": { component: ShoulderJoint, alt: "Shoulder joint anatomy diagram" },
   spine: { component: Spine, alt: "Spinal column diagram" },

@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -9,13 +12,27 @@ import {
 import type { ContentBlock } from "@/prisma/data/types";
 import { Card } from "@/components/ui";
 import { Illustration, ILLUSTRATIONS } from "@/components/illustrations";
+import { usePrefersReducedMotion } from "@/components/motion";
 
 export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
+  const reduce = usePrefersReducedMotion();
   return (
     <div className="space-y-5">
-      {blocks.map((block, i) => (
-        <Block key={i} block={block} />
-      ))}
+      {blocks.map((block, i) =>
+        reduce ? (
+          <Block key={i} block={block} />
+        ) : (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3), ease: [0.21, 0.65, 0.36, 1] }}
+          >
+            <Block block={block} />
+          </motion.div>
+        )
+      )}
     </div>
   );
 }
@@ -202,7 +219,7 @@ function Block({ block }: { block: ContentBlock }) {
     case "image": {
       if (!ILLUSTRATIONS[block.illustration]) return null;
       return (
-        <figure className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <figure className="ill-live overflow-hidden rounded-2xl border border-border bg-surface">
           <div className="mx-auto max-w-md p-4">
             <Illustration name={block.illustration} />
           </div>

@@ -4,6 +4,7 @@ import {
   Bookmark,
   Bot,
   ClipboardList,
+  GraduationCap,
   Layers,
   LibraryBig,
   PersonStanding,
@@ -29,6 +30,7 @@ export function SectionGrid({ counts }: { counts: SectionGridCounts }) {
   const sections = [
     { href: "/topics", label: "Topic Library", desc: `${counts.topics} topics to master`, icon: LibraryBig, tint: "bg-accent-soft text-accent-strong" },
     { href: "/anatomy", label: "3D Anatomy", desc: "Rotate & explore the skeleton", icon: PersonStanding, tint: "bg-accent-soft text-accent-strong" },
+    { href: "/exams", label: "Exam Prep", desc: "NPTE, PCE, Gulf, India + mock exams", icon: GraduationCap, tint: "bg-warning-soft text-warning" },
     { href: "/flashcards", label: "Flashcards", desc: `${counts.flashcards} cards for rapid recall`, icon: Layers, tint: "bg-success-soft text-success" },
     { href: "/history", label: "Assessments", desc: `${counts.quizzes} quizzes completed`, icon: ClipboardList, tint: "bg-warning-soft text-warning" },
     { href: "/progress", label: "Progress", desc: "Charts & weak areas", icon: BarChart3, tint: "bg-accent-soft text-accent-strong" },

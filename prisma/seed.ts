@@ -13,12 +13,27 @@ import aclInjury from "./data/acl-injury";
 import ankleSprain from "./data/ankle-sprain";
 import tennisElbow from "./data/tennis-elbow";
 import strokeRehabilitation from "./data/stroke-rehabilitation";
+import traumaticBrainInjury from "./data/traumatic-brain-injury";
+import spinalCordInjury from "./data/spinal-cord-injury";
+import multipleSclerosis from "./data/multiple-sclerosis";
+import vestibularRehabilitation from "./data/vestibular-rehabilitation";
 import parkinsonsDisease from "./data/parkinsons-disease";
 import copdRehabilitation from "./data/copd-rehabilitation";
 import shoulderAnatomy from "./data/shoulder-anatomy";
 import kneeSpecialTests from "./data/knee-special-tests";
 import gaitAssessment from "./data/gait-assessment";
 import exercisePrescription from "./data/exercise-prescription";
+import chronicPain from "./data/chronic-pain";
+import amputationRehabilitation from "./data/amputation-rehabilitation";
+import pelvicFloor from "./data/pelvic-floor";
+import cervicalSpine from "./data/cervical-spine";
+import muscleStrainInjuries from "./data/muscle-strain-injuries";
+import tendinopathy from "./data/tendinopathy";
+import fractureManagement from "./data/fracture-management";
+import rheumatoidArthritis from "./data/rheumatoid-arthritis";
+import peripheralNerveInjuries from "./data/peripheral-nerve-injuries";
+import cerebralPalsy from "./data/cerebral-palsy";
+import cardiacRehabilitation from "./data/cardiac-rehabilitation";
 
 const prisma = new PrismaClient();
 
@@ -31,11 +46,26 @@ const TOPICS: TopicSeed[] = [
   ankleSprain,
   tennisElbow,
   strokeRehabilitation,
+  traumaticBrainInjury,
+  spinalCordInjury,
+  multipleSclerosis,
+  vestibularRehabilitation,
   parkinsonsDisease,
   copdRehabilitation,
   kneeSpecialTests,
   gaitAssessment,
   exercisePrescription,
+  peripheralNerveInjuries,
+  cerebralPalsy,
+  cardiacRehabilitation,
+  muscleStrainInjuries,
+  tendinopathy,
+  fractureManagement,
+  rheumatoidArthritis,
+  chronicPain,
+  amputationRehabilitation,
+  pelvicFloor,
+  cervicalSpine,
 ];
 
 const ACHIEVEMENTS = [

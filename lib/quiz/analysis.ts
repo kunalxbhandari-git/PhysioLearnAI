@@ -105,27 +105,51 @@ export function analyzeAttempt(
 
   const toImprove = weaknesses.slice(0, 4).map((w) => `${w.label} (${w.accuracy}% accuracy)`);
 
+  const mock = topic.slug === "mock-exam";
   const plan: { day: number; task: string }[] = [];
   let day = 1;
   for (const w of weaknesses.slice(0, 3)) {
-    plan.push({ day: day++, task: `Re-study the ${w.label.toLowerCase()} sections of ${topic.title}.` });
+    plan.push({
+      day: day++,
+      task: mock
+        ? `Re-study ${w.label.toLowerCase()} across the topic library — that's where this paper cost you marks.`
+        : `Re-study the ${w.label.toLowerCase()} sections of ${topic.title}.`,
+    });
   }
   if (weaknesses.length === 0 && !passed) {
-    plan.push({ day: day++, task: `Re-read the full study module for ${topic.title}, focusing on the quick revision summary.` });
+    plan.push({
+      day: day++,
+      task: mock
+        ? "Re-read the quick revision summaries of your weakest topics."
+        : `Re-read the full study module for ${topic.title}, focusing on the quick revision summary.`,
+    });
   }
-  plan.push({ day: day++, task: `Practise the ${topic.title} flashcards until recall feels immediate.` });
+  plan.push({
+    day: day++,
+    task: mock
+      ? "Practise flashcards from your weakest topics until recall feels immediate."
+      : `Practise the ${topic.title} flashcards until recall feels immediate.`,
+  });
   if (timeouts > 0) plan.push({ day: day++, task: "Take a 10-question practice-mode quiz to build speed with instant feedback." });
-  plan.push({ day: day++, task: `Retake the ${topic.title} assessment and compare your score.` });
+  plan.push({
+    day: day++,
+    task: mock ? "Take another mixed mock exam and compare your score." : `Retake the ${topic.title} assessment and compare your score.`,
+  });
 
   const worst = weaknesses[0] ?? null;
-  const recommendation = worst
-    ? {
-        label: `Study weak area: ${worst.label} in ${topic.title}`,
-        href: `/learn/${topic.slug}`,
-      }
-    : passed
-      ? { label: "Explore your next topic", href: "/topics" }
-      : { label: `Re-study ${topic.title}`, href: `/learn/${topic.slug}` };
+  const isMock = topic.slug === "mock-exam";
+  const recommendation = isMock
+    ? worst
+      ? { label: `Study weak area: ${worst.label}`, href: "/topics" }
+      : { label: "Take another mock exam", href: "/exams" }
+    : worst
+      ? {
+          label: `Study weak area: ${worst.label} in ${topic.title}`,
+          href: `/learn/${topic.slug}`,
+        }
+      : passed
+        ? { label: "Explore your next topic", href: "/topics" }
+        : { label: `Re-study ${topic.title}`, href: `/learn/${topic.slug}` };
 
   return {
     strengths,
